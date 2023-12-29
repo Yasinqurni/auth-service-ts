@@ -28,7 +28,7 @@ export class UserRepository implements UserRepositoryInterface {
         id: user.id,
         username: user.username,
         email: user.email,
-        phoneNumber: user.phoneNumber,
+        phone_number: user.phone_number,
         password: user.password,
       }
     } else {

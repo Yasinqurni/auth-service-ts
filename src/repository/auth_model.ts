@@ -1,22 +1,22 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize'
 
 interface UserAttributes {
-  id: number;
-  username: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
+  id: number
+  username: string
+  email: string
+  phone_number: string
+  password: string
 }
 
 class User extends Model<UserAttributes> implements UserAttributes {
-  public id!: number;
-  public username!: string;
-  public email!: string;
-  public phoneNumber!: string;
-  public password!: string;
+  public id!: number
+  public username!: string
+  public email!: string
+  public phone_number!: string
+  public password!: string
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly created_at!: Date
+  public readonly updated_at!: Date
 }
 
 // Sequelize model configuration
@@ -41,7 +41,7 @@ const initUserModel = (sequelize: Sequelize) => {
           isEmail: true,
         },
       },
-      phoneNumber: {
+      phone_number: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
@@ -54,8 +54,12 @@ const initUserModel = (sequelize: Sequelize) => {
     {
       sequelize: sequelize,
       tableName: 'users',
+      deletedAt: 'deleted_at',
+      updatedAt: 'updated_at',
+      createdAt: 'created_at',
     }
-  );
-};
+  )
+  return User
+}
 
-export { UserAttributes, User, initUserModel };
+export { UserAttributes, User, initUserModel }
