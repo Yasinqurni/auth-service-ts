@@ -38,11 +38,14 @@ export class UserRepository implements UserRepositoryInterface {
 
   async update(id: number, data: Partial<UserAttributes>): Promise<void> {
 
-    await this.userModel.findByPk(id)
-  
+    const user = await this.userModel.findByPk(id)
+    if (user) {
+      await user.update(data)
+    }
   }
 
   async delete(id: number): Promise<void> {
+
     const user = await this.userModel.findByPk(id)
     if (user) {
       await user.destroy()
