@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { JwtPayload } from '../../pkg/jwt'
+import { AppConfig } from "../../pkg/config"
 // Extend the Request type to include the property
 interface AuthenticatedRequest extends Request {
   id?: string
@@ -15,10 +16,10 @@ export interface AuthMiddlewareInterface {
 
 export class AuthMiddleware implements AuthMiddlewareInterface {
 
-  private secretKey: string
+  private appConfig: AppConfig
 
-  constructor(secretKey: string) {
-    this.secretKey = secretKey
+  constructor(appConfig: AppConfig) {
+    this.appConfig = appConfig
   }
 
     async jwtMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
@@ -31,7 +32,7 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
       
         try {
           // token verification
-          const decoded = jwt.verify(token as string, this.secretKey) as JwtPayload
+          const decoded = jwt.verify(token as string, this.appConfig.jwt.secretKey, { maxAge: this.appConfig.jwt.expired }) as JwtPayload
       
           req.id = decoded.id
           req.username = decoded.username

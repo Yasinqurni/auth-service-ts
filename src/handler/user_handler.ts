@@ -76,7 +76,7 @@ export class UserHandler implements UserHandlerInterface {
       const token = await this.userService.login(userData) 
       res.status(201).json(token)
     } catch (error) {
-      console.error('Error creating user:', error) 
+      console.error('Error login user:', error) 
       res.status(500).send('Internal Server Error') 
     }
   }
