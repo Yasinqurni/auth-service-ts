@@ -1,7 +1,7 @@
 import { Request, Response } from 'express' 
-import { UserServiceInterface } from '../service/auth_service' 
-import { UserAttributes } from '../repository/auth_model' 
-import CreateUserReq from './request/create_user'
+import { UserServiceInterface } from '../service/user_service' 
+import { UserAttributes } from '../repository/user_model' 
+import CreateUserReq from './request/user_request'
 
 export interface UserHandlerInterface {
     createUser(req: Request, res: Response): Promise<void>

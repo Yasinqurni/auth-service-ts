@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { UserAttributes, RoleEnum } from '../repository/auth_model'
-import { UserRepositoryInterface } from '../repository/auth_repository'
-import CreateUserReq from '../handler/request/create_user';
+import { UserAttributes, RoleEnum } from '../repository/user_model'
+import { UserRepositoryInterface } from '../repository/user_repository'
+import CreateUserReq from '../handler/request/user_request';
 import { hashPassword } from '../../pkg/bcrypt';
 
 export interface UserServiceInterface {

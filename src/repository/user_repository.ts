@@ -1,4 +1,4 @@
-import { User, UserAttributes } from './auth_model'
+import { User, UserAttributes } from './user_model'
 
 export interface UserRepositoryInterface {
   create(data: UserAttributes): Promise<void>
