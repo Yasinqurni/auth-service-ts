@@ -1,6 +1,7 @@
 import { Request, Response } from 'express' 
 import { UserServiceInterface } from '../service/auth_service' 
 import { UserAttributes } from '../repository/auth_model' 
+import CreateUserReq from './request/create_user'
 
 export interface UserHandlerInterface {
     createUser(req: Request, res: Response): Promise<void>
@@ -21,7 +22,7 @@ export class UserHandler implements UserHandlerInterface {
   }
   public async createUser(req: Request, res: Response): Promise<void> {
     try {
-      const userData: UserAttributes = req.body 
+      const userData: CreateUserReq = req.body 
       await this.userService.create(userData) 
       res.status(201).send('User created successfully.') 
     } catch (error) {

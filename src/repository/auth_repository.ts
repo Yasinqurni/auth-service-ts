@@ -30,6 +30,7 @@ export class UserRepository implements UserRepositoryInterface {
         email: user.email,
         phone_number: user.phone_number,
         password: user.password,
+        role: user.role
       }
     } else {
       return null

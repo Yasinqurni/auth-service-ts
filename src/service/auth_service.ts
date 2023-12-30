@@ -1,8 +1,11 @@
-import { UserAttributes } from '../repository/auth_model'
+import { v4 as uuidv4 } from 'uuid';
+import { UserAttributes, RoleEnum } from '../repository/auth_model'
 import { UserRepositoryInterface } from '../repository/auth_repository'
+import CreateUserReq from '../handler/request/create_user';
+import { hashPassword } from '../../pkg/bcrypt';
 
 export interface UserServiceInterface {
-    create(data: UserAttributes): Promise<void>
+    create(data: CreateUserReq): Promise<void>
     getProfile(id: number): Promise<UserAttributes | null>
     update(id: number, data: Partial<UserAttributes>): Promise<void>
     delete(id: number): Promise<void>
@@ -10,13 +13,21 @@ export interface UserServiceInterface {
 
 export class UserService implements UserServiceInterface {
 
-    constructor(private userRepository: UserRepositoryInterface) {
+    constructor(private userRepository: UserRepositoryInterface) {  
         this.userRepository = userRepository
     }
 
-    async create(data: UserAttributes): Promise<void> {
+    async create(data: CreateUserReq): Promise<void> {
 
-        return await this.userRepository.create(data)
+        const user: UserAttributes = {
+            id: uuidv4(),
+            username: data.username,
+            email: data.email,
+            phone_number: data.phone_number,
+            password: await hashPassword(data.password),
+            role: RoleEnum.User
+        }
+        return await this.userRepository.create(user)
 
     }
 

@@ -1,19 +1,26 @@
 import { DataTypes, Model, Sequelize } from 'sequelize'
 
 interface UserAttributes {
-  id: number
+  id: string
   username: string
   email: string
   phone_number: string
   password: string
+  role: RoleEnum
+}
+
+enum RoleEnum {
+  Admin = "admin",
+  User = "user"
 }
 
 class User extends Model<UserAttributes> implements UserAttributes {
-  public id!: number
+  public id!: string
   public username!: string
   public email!: string
   public phone_number!: string
   public password!: string
+  public role!: RoleEnum
 
   public readonly created_at!: Date
   public readonly updated_at!: Date
@@ -50,6 +57,10 @@ const initUserModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       sequelize: sequelize,
@@ -62,4 +73,4 @@ const initUserModel = (sequelize: Sequelize) => {
   return User
 }
 
-export { UserAttributes, User, initUserModel }
+export { UserAttributes, User, initUserModel, RoleEnum }
