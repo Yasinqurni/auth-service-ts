@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv'
 export interface AppConfig {
     database: DatabaseConfig
     app: AppSettings
+    jwt: Jwt
 }
 
 export interface DatabaseConfig {
@@ -16,6 +17,11 @@ export interface DatabaseConfig {
 
 export interface AppSettings {
     port: string
+}
+
+interface Jwt {
+    secretKey: string
+    expired: string
 }
 
 export interface Config {
@@ -38,6 +44,10 @@ export class ConfigLoader implements Config {
             },
             app: {
                 port: String(process.env.PORT)
+            },
+            jwt: {
+                secretKey: String(process.env.JWT_SECRETKEY),
+                expired: String(process.env.JWT_EXPIRED)
             }
         }
 

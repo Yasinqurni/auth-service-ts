@@ -5,6 +5,7 @@ export interface UserRepositoryInterface {
   getProfile(id: number): Promise<UserAttributes | null>
   update(id: number, data: Partial<UserAttributes>): Promise<void>
   delete(id: number): Promise<void>
+  getByEmail(email: string): Promise<UserAttributes | null>
 }
 
 export class UserRepository implements UserRepositoryInterface {
@@ -24,16 +25,13 @@ export class UserRepository implements UserRepositoryInterface {
     const user = await this.userModel.findByPk(id)
 
     if (user) {
-      return {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        phone_number: user.phone_number,
-        password: user.password,
-        role: user.role
-      }
+
+      return user
+
     } else {
+
       return null
+      
     }
   }
 
@@ -52,4 +50,19 @@ export class UserRepository implements UserRepositoryInterface {
       await user.destroy()
     }
   }
+
+  async getByEmail(email: string): Promise<UserAttributes | null> {
+    const user = await this.userModel.findOne({ where: { email } })
+
+    if (user) {
+
+      return user
+
+    } else {
+
+      return null
+
+    }
+  }
+
 }

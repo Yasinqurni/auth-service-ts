@@ -18,7 +18,7 @@ async function initialize() {
     app.use(express.urlencoded({extended: true})); //support for multiform data
 
     //router definition
-    app.use('/api/v1', Init(db.getSequelizeInstance(), express.Router())); // API endpoint
+    app.use('/api/v1', Init(db.getSequelizeInstance(), express.Router(), configEnv)); // API endpoint
 
     //launch the server
     app.listen(configEnv.app.port, () => {

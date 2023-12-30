@@ -21,6 +21,7 @@ export class UserRouter {
     this.router.get('/users', this.authMiddleware.jwtMiddleware, this.userHandler.getUserProfile.bind(this.userHandler))
     this.router.put('/users', this.authMiddleware.jwtMiddleware, this.userHandler.updateUser.bind(this.userHandler))
     this.router.delete('/users', this.authMiddleware.jwtMiddleware, this.userHandler.deleteUser.bind(this.userHandler))
+    this.router.post('/login', this.userHandler.login.bind(this.userHandler))
   }
 
   public getRouter(): express.Router {

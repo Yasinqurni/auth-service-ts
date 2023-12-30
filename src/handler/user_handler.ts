@@ -1,13 +1,14 @@
 import { Request, Response } from 'express' 
 import { UserServiceInterface } from '../service/user_service' 
 import { UserAttributes } from '../repository/user_model' 
-import CreateUserReq from './request/user_request'
+import { CreateUserReq, LoginUserReq } from './request/user_request'
 
 export interface UserHandlerInterface {
     createUser(req: Request, res: Response): Promise<void>
     getUserProfile(req: Request, res: Response): Promise<void>
     updateUser(req: Request, res: Response): Promise<void>
     deleteUser(req: Request, res: Response): Promise<void>
+    login(req: Request, res: Response): Promise<void>
 
 }
 
@@ -69,4 +70,15 @@ export class UserHandler implements UserHandlerInterface {
     }
   }
 
+  public async login(req: Request, res: Response): Promise<void> {
+    try {
+      const userData: LoginUserReq = req.body 
+      const token = await this.userService.login(userData) 
+      res.status(201).json(token)
+    } catch (error) {
+      console.error('Error creating user:', error) 
+      res.status(500).send('Internal Server Error') 
+    }
+  }
+ 
 }
