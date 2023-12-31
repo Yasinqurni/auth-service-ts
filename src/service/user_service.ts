@@ -6,6 +6,7 @@ import { hashPassword, comparePassword } from '../../pkg/bcrypt'
 import { generateToken } from '../../pkg/jwt'
 import { AppConfig } from "../../pkg/config"
 import { JwtPayload } from '../../pkg/jwt'
+import { CustomError } from '../handler/response/custom_response'
 
 export interface UserServiceInterface {
     create(data: CreateUserReq): Promise<void>
@@ -28,7 +29,7 @@ export class UserService implements UserServiceInterface {
 
     async create(data: CreateUserReq): Promise<void> {
 
-        const user: UserAttributes = {
+        const req: UserAttributes = {
             id: uuidv4(),
             username: data.username,
             email: data.email,
@@ -36,8 +37,13 @@ export class UserService implements UserServiceInterface {
             password: await hashPassword(data.password),
             role: RoleEnum.User
         }
-        return await this.userRepository.create(user)
 
+        const user = await this.userRepository.getByEmail(req.email)
+        if(user != null) {
+            throw new CustomError(400, 'User already exist.')
+        }
+
+        return await this.userRepository.create(req)
     }
 
     async getProfile(id: string): Promise<UserAttributes | null> {

@@ -4,6 +4,7 @@ import { UserAttributes } from '../repository/user_model'
 import { CreateUserReq, LoginUserReq } from './request/user_request'
 import { ApiResponse, CustomError } from './response/custom_response'
 import { AuthenticatedRequest } from '../../pkg/express_request'
+import NewProfileResponse from './response/profile_response'
 
 export interface UserHandlerInterface {
     createUser(req: Request, res: Response, next: NextFunction): Promise<void>
@@ -42,17 +43,19 @@ export class UserHandler implements UserHandlerInterface {
   public async getUserProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
     
-      const userProfile = await this.userService.getProfile(String(req.id));
+      const user = await this.userService.getProfile(String(req.id));
 
-      if (userProfile == null) {
+      if (user == null) {
         throw new CustomError(404, 'User not found.');
       }
 
+      const result = NewProfileResponse(user)
+
       const resp: ApiResponse = {
         success: true,
-        data: userProfile,
-        message: 'Get Profile successfully.'
-      };
+        message: 'Get Profile successfully.',
+        data: result
+      }
 
       res.status(200).json(resp)
 
@@ -104,8 +107,8 @@ export class UserHandler implements UserHandlerInterface {
     
       const resp: ApiResponse = {
         success: true,
-        data: token,
-        message: 'Login successfully.'
+        message: 'Login successfully.',
+        data: token
       }
 
       res.status(200).json(resp)
