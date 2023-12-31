@@ -44,7 +44,7 @@ export class UserHandler implements UserHandlerInterface {
     
       const userProfile = await this.userService.getProfile(String(req.id));
 
-      if (!userProfile) {
+      if (userProfile == null) {
         throw new CustomError(404, 'User not found.');
       }
 

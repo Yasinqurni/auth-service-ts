@@ -39,7 +39,11 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
           next()
 
         } catch (error) {
-          next(error)
+          if (error instanceof jwt.TokenExpiredError) {
+            next(new CustomError(401, 'Token expired. Please log in again.'))
+          } else {
+            next(error);
+          }
         }
       }
 }
