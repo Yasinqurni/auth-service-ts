@@ -2,9 +2,9 @@ import { User, UserAttributes } from './user_model'
 
 export interface UserRepositoryInterface {
   create(data: UserAttributes): Promise<void>
-  getProfile(id: number): Promise<UserAttributes | null>
-  update(id: number, data: Partial<UserAttributes>): Promise<void>
-  delete(id: number): Promise<void>
+  getProfile(id: string): Promise<UserAttributes | null>
+  update(id: string, data: Partial<UserAttributes>): Promise<void>
+  delete(id: string): Promise<void>
   getByEmail(email: string): Promise<UserAttributes | null>
 }
 
@@ -20,7 +20,7 @@ export class UserRepository implements UserRepositoryInterface {
    
   }
 
-  async getProfile(id: number): Promise<UserAttributes | null> {
+  async getProfile(id: string): Promise<UserAttributes | null> {
 
     const user = await this.userModel.findByPk(id)
 
@@ -35,7 +35,7 @@ export class UserRepository implements UserRepositoryInterface {
     }
   }
 
-  async update(id: number, data: Partial<UserAttributes>): Promise<void> {
+  async update(id: string, data: Partial<UserAttributes>): Promise<void> {
 
     const user = await this.userModel.findByPk(id)
     if (user) {
@@ -43,7 +43,7 @@ export class UserRepository implements UserRepositoryInterface {
     }
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
 
     const user = await this.userModel.findByPk(id)
     if (user) {

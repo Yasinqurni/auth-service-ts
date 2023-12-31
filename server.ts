@@ -1,33 +1,36 @@
-import { ConfigLoader } from './pkg/config';
-import { DatabaseSequelize } from './pkg/sequelize';
-import express from 'express';
-import Init from './src/init';
+import { ConfigLoader } from './pkg/config'
+import { DatabaseSequelize } from './pkg/sequelize'
+import express from 'express'
+import Init from './src/init'
+import { errorHandlerMiddleware } from './src/middleware/error_middleware'
 
 async function initialize() {
   try {
-    const configLoader = new ConfigLoader();
-    const configEnv = configLoader.loadConfig();
+    const configLoader = new ConfigLoader()
+    const configEnv = configLoader.loadConfig()
 
-    const db = new DatabaseSequelize(configEnv);
-    await db.connect();
+    const db = new DatabaseSequelize(configEnv)
+    await db.connect()
 
-    const app = express();
+    const app = express()
     //Middleware definitions
-    app.disable('x-powered-by');
-    app.use(express.json()); //form data to json
-    app.use(express.urlencoded({extended: true})); //support for multiform data
+    app.disable('x-powered-by')
+    app.use(express.json()) //form data to json
+    app.use(express.urlencoded({extended: true})) //support for multiform data
 
     //router definition
-    app.use('/api/v1', Init(db.getSequelizeInstance(), express.Router(), configEnv)); // API endpoint
+    app.use('/api/v1', Init(db.getSequelizeInstance(), express.Router(), configEnv)) // API endpoint
 
+    app.use(errorHandlerMiddleware)
+    
     //launch the server
     app.listen(configEnv.app.port, () => {
-        console.log(`server running at port ${configEnv.app.port}`);
-    });
+        console.log(`server running at port ${configEnv.app.port}`)
+    })
     
 
   } catch (error) {
-    console.error('Error during initialization:', error);
+    console.error('Error during initialization:', error)
   }
 }
 

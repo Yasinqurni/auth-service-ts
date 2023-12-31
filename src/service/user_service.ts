@@ -9,9 +9,9 @@ import { JwtPayload } from '../../pkg/jwt'
 
 export interface UserServiceInterface {
     create(data: CreateUserReq): Promise<void>
-    getProfile(id: number): Promise<UserAttributes | null>
-    update(id: number, data: Partial<UserAttributes>): Promise<void>
-    delete(id: number): Promise<void>
+    getProfile(id: string): Promise<UserAttributes | null>
+    update(id: string, data: Partial<UserAttributes>): Promise<void>
+    delete(id: string): Promise<void>
     login(data: LoginUserReq): Promise<string>
   }
 
@@ -40,19 +40,19 @@ export class UserService implements UserServiceInterface {
 
     }
 
-    async getProfile(id: number): Promise<UserAttributes | null> {
+    async getProfile(id: string): Promise<UserAttributes | null> {
 
         return await this.userRepository.getProfile(id)
 
     }
 
-    async  update(id: number, data: Partial<UserAttributes>): Promise<void> {
+    async  update(id: string, data: Partial<UserAttributes>): Promise<void> {
 
         return await this.userRepository.update(id, data) 
 
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(id: string): Promise<void> {
 
         return await this.userRepository.delete(id)
 
@@ -72,6 +72,7 @@ export class UserService implements UserServiceInterface {
 
         const payload: JwtPayload = {
             id: String(user?.id),
+            username: String(user?.username),
             email: String(user?.email),
             role: String(user?.role),
 

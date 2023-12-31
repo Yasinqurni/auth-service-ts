@@ -18,9 +18,9 @@ export class UserRouter {
 
   public initializeRoutes(): void {
     this.router.post('/users', this.userHandler.createUser.bind(this.userHandler))
-    this.router.get('/users', this.authMiddleware.jwtMiddleware, this.userHandler.getUserProfile.bind(this.userHandler))
-    this.router.put('/users', this.authMiddleware.jwtMiddleware, this.userHandler.updateUser.bind(this.userHandler))
-    this.router.delete('/users', this.authMiddleware.jwtMiddleware, this.userHandler.deleteUser.bind(this.userHandler))
+    this.router.get('/users', this.authMiddleware.jwtMiddleware.bind(this.authMiddleware), this.userHandler.getUserProfile.bind(this.userHandler))
+    this.router.put('/users', this.authMiddleware.jwtMiddleware.bind(this.authMiddleware), this.userHandler.updateUser.bind(this.userHandler))
+    this.router.delete('/users', this.authMiddleware.jwtMiddleware.bind(this.authMiddleware), this.userHandler.deleteUser.bind(this.userHandler))
     this.router.post('/login', this.userHandler.login.bind(this.userHandler))
   }
 

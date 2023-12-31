@@ -1,14 +1,11 @@
-import { Request, Response, NextFunction } from 'express'
+import { Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { JwtPayload } from '../../pkg/jwt'
 import { AppConfig } from "../../pkg/config"
+import { AuthenticatedRequest } from '../../pkg/express_request'
+import { CustomError } from '../handler/response/custom_response'
 // Extend the Request type to include the property
-interface AuthenticatedRequest extends Request {
-  id?: string
-  username?: string
-  email?: string
-  role?: string
-}
+
 
 export interface AuthMiddlewareInterface {
     jwtMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> 
@@ -27,7 +24,7 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
         const token = req.header('Authorization')?.replace('Bearer ', '')
       
         if (!token) {
-          res.status(401).json({ error: 'Unauthorized' })
+          throw new CustomError(401, 'Unauthorized')
         }
       
         try {
@@ -42,7 +39,7 @@ export class AuthMiddleware implements AuthMiddlewareInterface {
           next()
 
         } catch (error) {
-          res.status(401).json({ error: 'Unauthorized' })
+          next(error)
         }
       }
 }

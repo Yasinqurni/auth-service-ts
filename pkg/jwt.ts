@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 export interface JwtPayload {
     id: string
-    username?: string
+    username: string
     email: string
     role: string
   }

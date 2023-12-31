@@ -1,14 +1,16 @@
-import { Request, Response } from 'express' 
+import { Request, Response, NextFunction } from 'express' 
 import { UserServiceInterface } from '../service/user_service' 
 import { UserAttributes } from '../repository/user_model' 
 import { CreateUserReq, LoginUserReq } from './request/user_request'
+import { ApiResponse, CustomError } from './response/custom_response'
+import { AuthenticatedRequest } from '../../pkg/express_request'
 
 export interface UserHandlerInterface {
-    createUser(req: Request, res: Response): Promise<void>
-    getUserProfile(req: Request, res: Response): Promise<void>
-    updateUser(req: Request, res: Response): Promise<void>
-    deleteUser(req: Request, res: Response): Promise<void>
-    login(req: Request, res: Response): Promise<void>
+    createUser(req: Request, res: Response, next: NextFunction): Promise<void>
+    getUserProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void>
+    updateUser(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void>
+    deleteUser(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void>
+    login(req: Request, res: Response, next: NextFunction): Promise<void>
 
 }
 
@@ -21,63 +23,95 @@ export class UserHandler implements UserHandlerInterface {
     this.userService = userService 
 
   }
-  public async createUser(req: Request, res: Response): Promise<void> {
+  public async createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userData: CreateUserReq = req.body 
-      await this.userService.create(userData) 
-      res.status(201).send('User created successfully.') 
-    } catch (error) {
-      console.error('Error creating user:', error) 
-      res.status(500).send('Internal Server Error') 
-    }
-  }
-
-  public async getUserProfile(req: Request, res: Response): Promise<void> {
-    try {
-      const userId: number = parseInt(req.params.id, 10) 
-      const userProfile = await this.userService.getProfile(userId) 
-      if (userProfile) {
-        res.status(200).json(userProfile) 
-      } else {
-        res.status(404).send('User not found.') 
+      await this.userService.create(userData)
+      
+      const resp: ApiResponse = {
+        success: true,
+        message: 'User created successfully.'
       }
+      res.status(201).send(resp) 
+
     } catch (error) {
-      console.error('Error getting user profile:', error) 
-      res.status(500).send('Internal Server Error') 
+      next(error)
     }
   }
 
-  public async updateUser(req: Request, res: Response): Promise<void> {
+  public async getUserProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId: number = parseInt(req.params.id, 10) 
+    
+      const userProfile = await this.userService.getProfile(String(req.id));
+
+      if (!userProfile) {
+        throw new CustomError(404, 'User not found.');
+      }
+
+      const resp: ApiResponse = {
+        success: true,
+        data: userProfile,
+        message: 'Get Profile successfully.'
+      };
+
+      res.status(200).json(resp)
+
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  public async updateUser(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      
       const userData: Partial<UserAttributes> = req.body 
-      await this.userService.update(userId, userData) 
-      res.status(200).send('User updated successfully.') 
+
+      await this.userService.update(String(req.id), userData) 
+
+      const resp: ApiResponse = {
+        success: true,
+        message: 'User updated successfully.'
+      }
+
+      res.status(200).json(resp)
+
     } catch (error) {
-      console.error('Error updating user:', error) 
-      res.status(500).send('Internal Server Error') 
+      next(error)
     }
   }
 
-  public async deleteUser(req: Request, res: Response): Promise<void> {
+  public async deleteUser(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId: number = parseInt(req.params.id, 10) 
-      await this.userService.delete(userId) 
-      res.status(200).send('User deleted successfully.') 
+  
+      await this.userService.delete(String(req.id)) 
+
+      const resp: ApiResponse = {
+        success: true,
+        message: 'User deleted successfully.'
+      }
+
+      res.status(200).json(resp)
+
     } catch (error) {
-      console.error('Error deleting user:', error) 
-      res.status(500).send('Internal Server Error') 
+      next(error) 
     }
   }
 
-  public async login(req: Request, res: Response): Promise<void> {
+  public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userData: LoginUserReq = req.body 
       const token = await this.userService.login(userData) 
-      res.status(201).json(token)
+    
+      const resp: ApiResponse = {
+        success: true,
+        data: token,
+        message: 'Login successfully.'
+      }
+
+      res.status(200).json(resp)
+
     } catch (error) {
-      console.error('Error login user:', error) 
-      res.status(500).send('Internal Server Error') 
+      next(error)
     }
   }
  
